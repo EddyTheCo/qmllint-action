@@ -10,7 +10,7 @@ on:
 jobs:
   build_test_package:
     permissions:
-      pull-request: write
+      pull-requests: write
     strategy:
       matrix:
         os: [ubuntu-latest]
