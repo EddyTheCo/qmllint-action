@@ -1,0 +1,80 @@
+name: push-build-release
+run-name: ${{ github.actor }} ${{ github.event_name }} to ${{ github.base_ref }} 
+on:
+
+  push:
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [develop]
+jobs:
+  build_test_package:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    uses: EddyTheCo/Common/.github/workflows/build-test-install.yml@add_qmllint
+    with:
+      os: ${{ matrix.os }}
+      qtVersion: '6.6.0'
+      cmakeArgs: " -DQTDEPLOY=ON -DCPACK_PACKAGE_CONTACT=estervtech@gmail.com -DREPO_URL=https://eddytheco.github.io/QVault -DCPACK_PACKAGE_VENDOR=estervtech"
+      test: false
+      qmllint: false
+
+  build_doxygen:
+    if: startsWith(github.ref, 'refs/tags/v')
+    uses: EddyTheCo/Common/.github/workflows/build-docs.yml@v0.3.0
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build_test_package, build_doxygen]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+           path: artifacts
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      - name: Move repositories to webpage
+        run: |
+          mv artifacts/docs/html github-pages
+          rm -rf artifacts/docs
+          mkdir github-pages/packages/ ${{runner.temp}}/platforms/
+          mv artifacts/*/_CPack_Packages/* ${{runner.temp}}/platforms/
+          for i in ${{runner.temp}}/platforms/*; do mv $i/IFW/*/repository/* $i/; rm -rf $i/IFW $i/TGZ; done;
+          mv ${{runner.temp}}/platforms/* github-pages/packages/ 
+          rm -rf artifacts/*/_CPack_Packages
+
+      - name: Package github-page
+        working-directory: ${{ github.workspace }}/github-pages/
+        run: |
+          cmake -E make_directory ${{runner.temp}}/page-packages
+          cmake -E tar c ${{runner.temp}}/page-packages/github-pages.tar -- .
+
+      - name: Releases 
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./artifacts/*/*   
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 'github-pages' 
+          path:  ${{runner.temp}}/page-packages/*
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

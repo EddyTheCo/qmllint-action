@@ -27,7 +27,8 @@ find_package(Qt6 COMPONENTS Core Network)
 if(Qt6_FOUND)
 
 	qt_standard_project_setup()
-	add_executable(qmllC src/commenter.cpp include/commenter.hpp)
+        add_executable(qmllC src/commenter.cpp )
+
 	target_link_libraries(qmllC PRIVATE Qt6::Core Qt6::Network)
 	set_target_properties(qmllC PROPERTIES
 		WIN32_EXECUTABLE ON
@@ -43,7 +44,7 @@ if(Qt6_FOUND)
 		)
 		install(SCRIPT ${deploy_script} COMPONENT qmllC)
 	endif(QTDEPLOY)
-	build_exports()
+	build_cpack()
 endif(Qt6_FOUND)
 if(BUILD_DOCS)
 	build_docs()

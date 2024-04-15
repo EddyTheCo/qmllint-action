@@ -1,0 +1,35 @@
+name: qmllint reviewer
+description: Creates review comments from qmlint json files
+author: Amarula Solutions
+
+on:
+  workflow_call:
+    inputs:
+      jsondir:
+        description: Absolute Path to qmllint json files
+        default: ''
+        type: string
+      repodir:
+        description: Absolute Path to local repo
+        default: ${{ github.workspace }}
+        type: string
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - uses: robinraju/release-downloader@v1.10
+        with:
+          latest: true
+          tarBall: true
+          extract: true
+          out-file-path: "qmllintReviewer"
+
+      - name: Run
+        run: |
+          export LD_LIBRARY_PATH=$GITHUB_WORKSPACE/qmllintReviewer/lib
+          ls -R $GITHUB_WORKSPACE/qmllintReviewer/
+          $GITHUB_WORKSPACE/qmllintReviewer/bin/qmllC ${{ inputs.jsondir }}  ${{ inputs.repodir }} repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews ${{ secrets.GITHUB_TOKEN }} 
