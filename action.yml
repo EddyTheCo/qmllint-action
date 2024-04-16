@@ -28,7 +28,7 @@ runs:
       shell: 'bash'
       run: |
         echo ${{ github.workspace }}/${{ fromJson(steps.download.outputs.downloaded_files)[0] }}
-        export DPATH=$(echo ${{ github.workspace }}/${{ fromJson(steps.download.outputs.downloaded_files)[0] }} | sed 's/\.tar\.gz//g')
+        export DPATH=$(echo ${{ fromJson(steps.download.outputs.downloaded_files)[0] }} | sed 's/\.tar\.gz//g')
         echo $DPATH
         export LD_LIBRARY_PATH=$DPATH/lib
         ls -R $DPATH 
