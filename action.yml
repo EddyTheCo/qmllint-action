@@ -19,8 +19,9 @@ runs:
     - uses: robinraju/release-downloader@v1.10
       with:
         latest: true
-        tarBall: true
         extract: true
+        repository: "EddyTheCo/qmllint-action"
+        fileName: "*Linux*.tar.gz"
         out-file-path: "qmllintReviewer"
 
     - name: Run
