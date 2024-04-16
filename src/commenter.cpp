@@ -74,8 +74,8 @@ QNetworkReply* sendReview(const QString apiPath,const QString githubToken,const 
     request.setRawHeader(QByteArray("Authorization"),
                          QByteArray("Bearer ").append(githubToken.toUtf8()));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/vnd.github+json");
-    auto nam = QNetworkAccessManager();
-    return nam.post(request,QJsonDocument(payload).toJson());
+    auto nam = new QNetworkAccessManager();
+    return nam->post(request,QJsonDocument(payload).toJson());
 
 }
 
@@ -103,6 +103,7 @@ int main(int argc, char *argv[])
     qDebug()<<"jsonPath:"<<jsonPath;
     const QStringList files = jsonPath.entryList(QStringList() << "*_qmllint.json" , QDir::Files);
 
+
     qDebug()<<"files:"<<files;
     for(const auto & jsonFilePath:files)
     {
@@ -110,6 +111,7 @@ int main(int argc, char *argv[])
         qDebug()<<"payload:"<<payload;
         qDebug()<<"apiPath:"<<args.at(2);
         const auto reply=sendReview(args.at(2),args.at(3),payload);
+
         QObject::connect(reply, &QNetworkReply::finished,&app, [=](){
 
             if(!reply->error())
@@ -117,22 +119,20 @@ int main(int argc, char *argv[])
                 QByteArray response_data = reply->readAll();
                 auto data = (QJsonDocument::fromJson(response_data)).object();
                 qDebug()<<"replydata:"<<data;
-                reply->deleteLater();
+
             }
-            else
-            {
-                reply->deleteLater();
-            }
+
         });
+
         QObject::connect(reply, &QNetworkReply::errorOccurred,&app,[=](QNetworkReply::NetworkError code)
                          {
                              auto errorreply=reply->errorString();
                              qDebug()<<"Error:"<<errorreply;
                              qDebug()<<"code:"<<code;
                              qDebug()<<"errorfound"<<reply->readAll();
-                             reply->deleteLater();
                          });
     }
+
 
     return app.exec();
 }
