@@ -28,6 +28,8 @@ runs:
       shell: 'bash'
       run: |
         echo ${{ github.workspace }}/${{ fromJson(steps.download.outputs.downloaded_files)[0] }}
-        export LD_LIBRARY_PATH=${{ github.workspace }}/${{ fromJson(steps.download.outputs.downloaded_files)[0] }}/lib
-        ls -R ${{ github.workspace }}/${{ fromJson(steps.download.outputs.downloaded_files)[0] }}
-        ${{ github.workspace }}/${{ fromJson(steps.download.outputs.downloaded_files)[0] }}/bin/qmllC ${{ inputs.jsondir }}  ${{ inputs.repodir }} repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews ${{ github.token }}
+        export DPATH=$(echo ${{ github.workspace }}/${{ fromJson(steps.download.outputs.downloaded_files)[0] }} | sed 's/\.tar\.gz//g')
+        echo $DPATH
+        export LD_LIBRARY_PATH=$DPATH/lib
+        ls -R $DPATH 
+        $DPATH/bin/qmllC ${{ inputs.jsondir }}  ${{ inputs.repodir }} repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews ${{ github.token }}
