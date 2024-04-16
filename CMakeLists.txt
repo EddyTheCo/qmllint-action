@@ -22,7 +22,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include(GNUInstallDirs)
 
-find_package(Qt6 COMPONENTS Core Network)
+find_package(Qt6 COMPONENTS Core Network Gui Quick Qml)
 
 if(Qt6_FOUND)
 
@@ -45,6 +45,7 @@ if(Qt6_FOUND)
 		install(SCRIPT ${deploy_script} COMPONENT qmllC)
 	endif(QTDEPLOY)
 	build_cpack()
+	add_subdirectory(examples)
 endif(Qt6_FOUND)
 if(BUILD_DOCS)
 	build_docs()
