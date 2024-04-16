@@ -6,6 +6,7 @@
 #include<QFile>
 #include <QNetworkRequest>
 #include<QNetworkAccessManager>
+#include<QNetworkReply>
 
 #include<QCoreApplication>
 #include<QCommandLineParser>
@@ -63,7 +64,7 @@ QJsonObject reviewModule(const QString jsonFilepath,const QString rootPath="")
     return root;
 
 }
-void sendReview(const QString apiPath,const QString githubToken,const QJsonObject& payload)
+QNetworkReply* sendReview(const QString apiPath,const QString githubToken,const QJsonObject& payload)
 {
 
     auto api=QUrl("https://api.github.com");
@@ -71,10 +72,10 @@ void sendReview(const QString apiPath,const QString githubToken,const QJsonObjec
     auto request=QNetworkRequest(api);
 
     request.setRawHeader(QByteArray("Authorization"),
-                             QByteArray("Bearer ").append(githubToken.toUtf8()));
+                         QByteArray("Bearer ").append(githubToken.toUtf8()));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/vnd.github+json");
     auto nam = QNetworkAccessManager();
-    nam.post(request,QJsonDocument(payload).toJson());
+    return nam.post(request,QJsonDocument(payload).toJson());
 
 }
 
@@ -99,14 +100,39 @@ int main(int argc, char *argv[])
 
 
     auto jsonPath=QDir(args.at(0));
-
+    qDebug()<<"jsonPath:"<<jsonPath;
     const QStringList files = jsonPath.entryList(QStringList() << "*_qmllint.json" , QDir::Files);
 
+    qDebug()<<"files:"<<files;
     for(const auto & jsonFilePath:files)
     {
         const auto payload=reviewModule(args.at(0)+"/"+jsonFilePath,args.at(1));
-        sendReview(args.at(2),args.at(3),payload);
+        qDebug()<<"payload:"<<payload;
+        qDebug()<<"apiPath:"<<args.at(2);
+        const auto reply=sendReview(args.at(2),args.at(3),payload);
+        QObject::connect(reply, &QNetworkReply::finished,&app, [=](){
+
+            if(!reply->error())
+            {
+                QByteArray response_data = reply->readAll();
+                auto data = (QJsonDocument::fromJson(response_data)).object();
+                qDebug()<<"replydata:"<<data;
+                reply->deleteLater();
+            }
+            else
+            {
+                reply->deleteLater();
+            }
+        });
+        QObject::connect(reply, &QNetworkReply::errorOccurred,&app,[=](QNetworkReply::NetworkError code)
+                         {
+                             auto errorreply=reply->errorString();
+                             qDebug()<<"Error:"<<errorreply;
+                             qDebug()<<"code:"<<code;
+                             qDebug()<<"errorfound"<<reply->readAll();
+                             reply->deleteLater();
+                         });
     }
 
-    return 0;
+    return app.exec();
 }
