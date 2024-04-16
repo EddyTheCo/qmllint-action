@@ -21,7 +21,7 @@ jobs:
       qtVersion: '6.6.0'
       cmakeArgs: " -DQTDEPLOY=ON -DCPACK_PACKAGE_CONTACT=estervtech@gmail.com -DREPO_URL=https://eddytheco.github.io/QVault -DCPACK_PACKAGE_VENDOR=estervtech"
       test: false
-      qmllint: false
+      qmllint: startsWith(github.base_ref, 'develop')
 
   build_doxygen:
     if: startsWith(github.ref, 'refs/tags/v')
