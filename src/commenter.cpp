@@ -64,17 +64,24 @@ QJsonObject reviewModule(const QString jsonFilepath,const QString rootPath="")
     return root;
 
 }
-QNetworkReply* sendReview(const QString apiPath,const QString githubToken,const QJsonObject& payload)
+QNetworkReply* sendReview(const QString apiPath,const QString githubToken,const QJsonObject& payload,
+                          QNetworkAccessManager * nam)
 {
 
     auto api=QUrl("https://api.github.com");
+
+    
     api.setPath(apiPath);
+    qDebug()<<"api:"<<api;
     auto request=QNetworkRequest(api);
 
     request.setRawHeader(QByteArray("Authorization"),
                          QByteArray("Bearer ").append(githubToken.toUtf8()));
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/vnd.github+json");
-    auto nam = new QNetworkAccessManager();
+    request.setRawHeader(QByteArray("Accept"),
+                         QByteArray("application/vnd.github+json"));
+    request.setRawHeader(QByteArray("X-GitHub-Api-Version"),
+                         QByteArray("2022-11-28"));
+
     return nam->post(request,QJsonDocument(payload).toJson());
 
 }
@@ -98,6 +105,7 @@ int main(int argc, char *argv[])
     if(args.size()!=4)
         parser.showHelp();
 
+    auto nam = new QNetworkAccessManager(&app);
 
     auto jsonPath=QDir(args.at(0));
     qDebug()<<"jsonPath:"<<jsonPath;
@@ -110,17 +118,13 @@ int main(int argc, char *argv[])
         const auto payload=reviewModule(args.at(0)+"/"+jsonFilePath,args.at(1));
         qDebug()<<"payload:"<<payload;
         qDebug()<<"apiPath:"<<args.at(2);
-        const auto reply=sendReview(args.at(2),args.at(3),payload);
+        const auto reply=sendReview(args.at(2),args.at(3),payload,nam);
 
         QObject::connect(reply, &QNetworkReply::finished,&app, [=](){
 
-            if(!reply->error())
-            {
-                QByteArray response_data = reply->readAll();
-                auto data = (QJsonDocument::fromJson(response_data)).object();
-                qDebug()<<"replydata:"<<data;
-
-            }
+            QByteArray response_data = reply->readAll();
+            auto data = (QJsonDocument::fromJson(response_data)).object();
+            qDebug()<<"replydata:"<<data;
 
         });
 
