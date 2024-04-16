@@ -28,4 +28,4 @@ runs:
       run: |
         export LD_LIBRARY_PATH=$GITHUB_WORKSPACE/qmllintReviewer/lib
         ls -R $GITHUB_WORKSPACE/qmllintReviewer/
-        $GITHUB_WORKSPACE/qmllintReviewer/bin/qmllC ${{ inputs.jsondir }}  ${{ inputs.repodir }} repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews ${{ secrets.GITHUB_TOKEN }}
+        $GITHUB_WORKSPACE/qmllintReviewer/bin/qmllC ${{ inputs.jsondir }}  ${{ inputs.repodir }} repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews ${{ github.token }}
