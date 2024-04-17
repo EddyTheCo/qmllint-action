@@ -2,34 +2,33 @@ name: qmllint reviewer
 description: Creates review comments from qmlint json files
 author: Amarula Solutions
 
-on:
-  workflow_call:
-    inputs:
-      jsondir:
-        description: Absolute Path to qmllint json files
-        default: ''
-        type: string
-      repodir:
-        description: Absolute Path to local repo
-        default: ${{ github.workspace }}
-        type: string
+inputs:
+  jsondir:
+    description: Absolute Path to qmllint json files
+    default: ''
+    type: string
+  repodir:
+    description: Absolute Path to local repo
+    default: ${{ github.workspace }}
+    type: string
 
-jobs:
-  review:
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
+runs:
+  using: "composite"
+  steps:
 
-    steps:
-      - uses: robinraju/release-downloader@v1.10
-        with:
-          latest: true
-          tarBall: true
-          extract: true
-          out-file-path: "qmllintReviewer"
+    - uses: robinraju/release-downloader@v1.10
+      id: download
+      with:
+        latest: true
+        extract: true
+        repository: "EddyTheCo/qmllint-action"
+        fileName: "*Linux*.tar.gz"
 
-      - name: Run
-        run: |
-          export LD_LIBRARY_PATH=$GITHUB_WORKSPACE/qmllintReviewer/lib
-          ls -R $GITHUB_WORKSPACE/qmllintReviewer/
-          $GITHUB_WORKSPACE/qmllintReviewer/bin/qmllC ${{ inputs.jsondir }}  ${{ inputs.repodir }} repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews ${{ secrets.GITHUB_TOKEN }} 
+    - name: Run
+      shell: 'bash'
+      run: |
+        echo ${{ github.workspace }}/${{ fromJson(steps.download.outputs.downloaded_files)[0] }}
+        export DPATH=$(echo ${{ fromJson(steps.download.outputs.downloaded_files)[0] }} | sed 's/\.tar\.gz//g')
+        echo $DPATH
+        export LD_LIBRARY_PATH=$DPATH/lib
+        $DPATH/bin/qmlLintBot ${{ inputs.jsondir }}  ${{ inputs.repodir }} ${{ github.repository }} ${{ github.event.pull_request.number }} ${{ github.token }}
