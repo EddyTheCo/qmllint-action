@@ -65,16 +65,17 @@ QJsonObject moduleReviewer::getReview(const QHash<QString, std::pair<quint32, qu
     QJsonObject review;
     QJsonArray commentsInChange;
 
+    QString errorString="";
     for(const auto & v: std::as_const(m_comments))
     {
         const auto comment=v.toObject();
         const auto path=comment["path"].toString();
-            qDebug()<<"path:"<<path;
+        qDebug()<<"path:"<<path;
         if(changedFiles.contains(path))
         {
             qDebug()<<"changed files contains:"<<path;
             const auto pair = changedFiles.value(path);
-            const auto cline=comment["line"].toInteger();
+            const quint32 cline=comment["line"].toInteger();
             qDebug()<<"cline:"<<cline<<" "<<pair.first<<" "<<pair.second;
             if(cline>=pair.first&&cline<=pair.second)
             {
@@ -82,12 +83,19 @@ QJsonObject moduleReviewer::getReview(const QHash<QString, std::pair<quint32, qu
             }
         }
 
+        QString line="";
+        if(!comment["line"].isNull())
+        {
+            line=QString::number(comment["line"].toInteger());
+        }
+        errorString+="- "+ comment["path"].toString() + (line!=""?(":"+line):"") + " (" +  comment["body"].toString()+")";
+
     }
-    if(commentsInChange.size())
+    if(commentsInChange.size()|| errorString!="")
     {
-        review.insert("body","qmllint report for " + m_module + " module");
+        review.insert("body","**qmllint report for " + m_module + " module**\n"+errorString);
         review.insert("event","COMMENT");
-        review.insert("comments",m_comments);
+        review.insert("comments",commentsInChange);
     }
     qDebug()<<"review:"<<review;
     return review;
