@@ -27,22 +27,26 @@ find_package(Qt6 COMPONENTS Core Network Gui Quick Qml)
 if(Qt6_FOUND)
 
 	qt_standard_project_setup()
-        add_executable(qmllC src/commenter.cpp )
+        add_executable(qmlLintBot  src/qmllintBot.cpp
+            include/gitHClient.hpp include/qmlReviewer.hpp
+            src/gitHClient.cpp src/qmlReviewer.cpp
+        )
+        target_include_directories(qmlLintBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-	target_link_libraries(qmllC PRIVATE Qt6::Core Qt6::Network)
-	set_target_properties(qmllC PROPERTIES
+	target_link_libraries(qmlLintBot PRIVATE Qt6::Core Qt6::Network)
+	set_target_properties(qmlLintBot PROPERTIES
 		WIN32_EXECUTABLE ON
 		MACOSX_BUNDLE ON
 	)
-	install(TARGETS qmllC COMPONENT qmllC
-		BUNDLE DESTINATION . COMPONENT qmllC
+	install(TARGETS qmlLintBot COMPONENT qmlLintBot
+		BUNDLE DESTINATION . COMPONENT qmlLintBot
 	)
 	if(QTDEPLOY)
 		qt_generate_deploy_app_script(
-			TARGET qmllC
+			TARGET qmlLintBot
 			OUTPUT_SCRIPT deploy_script
 		)
-		install(SCRIPT ${deploy_script} COMPONENT qmllC)
+		install(SCRIPT ${deploy_script} COMPONENT qmlLintBot)
 	endif(QTDEPLOY)
 	build_cpack()
 	add_subdirectory(examples)
