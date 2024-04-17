@@ -76,7 +76,7 @@ QJsonObject moduleReviewer::getReview(const QHash<QString, std::pair<quint32, qu
             const auto pair = changedFiles.value(path);
             const auto cline=comment["line"].toInteger();
             qDebug()<<"cline:"<<cline<<" "<<pair.first<<" "<<pair.second;
-            if(cline>=pair.first&&cline<=pair.first+pair.second)
+            if(cline>=pair.first&&cline<=pair.second)
             {
                 commentsInChange.push_back(comment);
             }
