@@ -38,15 +38,15 @@ if(Qt6_FOUND)
 		WIN32_EXECUTABLE ON
 		MACOSX_BUNDLE ON
 	)
-	install(TARGETS qmlLintBot COMPONENT qmlLintBot
-		BUNDLE DESTINATION . COMPONENT qmlLintBot
+	install(TARGETS qmlLintBot COMPONENT Bot
+		BUNDLE DESTINATION . COMPONENT Bot
 	)
 	if(QTDEPLOY)
 		qt_generate_deploy_app_script(
 			TARGET qmlLintBot
 			OUTPUT_SCRIPT deploy_script
 		)
-		install(SCRIPT ${deploy_script} COMPONENT qmlLintBot)
+		install(SCRIPT ${deploy_script} COMPONENT Bot)
 	endif(QTDEPLOY)
 	build_cpack()
 	add_subdirectory(examples)
