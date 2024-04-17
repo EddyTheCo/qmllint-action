@@ -93,9 +93,7 @@ void Client::sendReview(const QJsonObject& payload)
 
     QObject::connect(reply, &QNetworkReply::finished,this, [=](){
 
-        QByteArray response_data = reply->readAll();
-        auto data = (QJsonDocument::fromJson(response_data)).object();
-        qDebug()<<"data from review:" <<data;
+        reply->deleteLater();
     });
 
     QObject::connect(reply, &QNetworkReply::errorOccurred,this,[=](QNetworkReply::NetworkError code)

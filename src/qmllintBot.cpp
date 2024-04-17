@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
         parser.showHelp();
 
 
-    QTimer::singleShot(30000, &app, QCoreApplication::quit);
+    QTimer::singleShot(10000, &app, QCoreApplication::quit);
 
     moduleReviewer::setRootPath(args.at(1));
 
@@ -44,9 +44,11 @@ int main(int argc, char *argv[])
         {
             const auto reviewer = moduleReviewer(args.at(0)+"/"+jsonFilePath);
             const auto review = reviewer.getReview(changedFiles);
-            gitHclient->sendReview(review);
+            if(!review.isEmpty())
+            {
+                gitHclient->sendReview(review);
+            }
         }
-        app.quit();
     });
 
     return app.exec();
