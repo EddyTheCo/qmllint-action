@@ -35,7 +35,6 @@ int main(int argc, char *argv[])
     auto gitHclient= new Client(args.at(2),args.at(3).toUInt(),args.at(4),&app);
 
     QObject::connect(gitHclient, &Client::ready,&app, [=,&app](){
-        qDebug()<<"gitclient ready";
         auto jsonPath=QDir(args.at(0));
         const QStringList files = jsonPath.entryList(QStringList() << "*_qmllint.json" , QDir::Files);
 

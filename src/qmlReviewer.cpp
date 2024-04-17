@@ -70,13 +70,12 @@ QJsonObject moduleReviewer::getReview(const QHash<QString, std::pair<quint32, qu
     {
         const auto comment=v.toObject();
         const auto path=comment["path"].toString();
-        qDebug()<<"path:"<<path;
+
         if(changedFiles.contains(path))
         {
-            qDebug()<<"changed files contains:"<<path;
             const auto pair = changedFiles.value(path);
             const quint32 cline=comment["line"].toInteger();
-            qDebug()<<"cline:"<<cline<<" "<<pair.first<<" "<<pair.second;
+
             if(cline>=pair.first&&cline<=pair.second)
             {
                 commentsInChange.push_back(comment);
@@ -97,6 +96,6 @@ QJsonObject moduleReviewer::getReview(const QHash<QString, std::pair<quint32, qu
         review.insert("event","COMMENT");
         review.insert("comments",commentsInChange);
     }
-    qDebug()<<"review:"<<review;
+
     return review;
 }
