@@ -88,7 +88,7 @@ QJsonObject moduleReviewer::getReview(const QHash<QString, std::pair<quint32, qu
         {
             line=QString::number(comment["line"].toInteger());
         }
-        errorString+="- "+ comment["path"].toString() + (line!=""?(":"+line):"") + " (" +  comment["body"].toString()+")";
+        errorString+="- "+ comment["path"].toString() + (line!=""?(":"+line):"") + " (" +  comment["body"].toString()+")\n";
 
     }
     if(commentsInChange.size()|| errorString!="")
