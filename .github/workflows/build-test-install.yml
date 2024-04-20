@@ -9,13 +9,12 @@ on:
     branches: [develop]
 jobs:
   build_test_package:
-    permissions:
-      pull-requests: write
+    permissions: read-all
     strategy:
       matrix:
         os: [ubuntu-latest]
 
-    uses: EddyTheCo/Common/.github/workflows/build-test-install.yml@add_qmllint
+    uses: EddyTheCo/Common/.github/workflows/build-test-install.yml@v0.4.0
     with:
       os: ${{ matrix.os }}
       qtVersion: '6.6.0'
