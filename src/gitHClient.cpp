@@ -28,22 +28,24 @@ void Client::getDiff()
         while(reply->bytesAvailable() )
         {
             auto line=reply->readLine();
-
             if (line.startsWith("+++ b/")&&line.size()>7)
             {
                 line.chop(1);
                 const auto filename=line.sliced(6);
+qDebug()<<"filename: "<<filename;
                 if(filename.size()>4)
                 {
                     const auto extension=filename.last(3);
                     if(extension=="qml"&&reply->bytesAvailable())
                     {
                         auto diff=reply->readLine();
-                        const auto psign=diff.lastIndexOf("+");
-                        if(psign!=-1&&diff.size()>5)
+			
+                        auto diffNumbers=QString(diff).split("@@").at(1);
+                        const auto psign=diffNumbers.lastIndexOf("+");
+                        if(psign!=-1)
                         {
-                            diff.chop(4);
-                            auto lNumbers=diff.sliced(psign+1).split(',');
+                            auto lNumbers=diffNumbers.sliced(psign+1).split(',');
+qDebug()<<"lNumbers: "<<lNumbers;
                             if(lNumbers.size()==2)
                             {
                                 const quint32 first=lNumbers.at(0).toUInt();
