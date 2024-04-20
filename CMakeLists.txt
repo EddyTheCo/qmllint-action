@@ -7,12 +7,12 @@ FetchContent_Declare(
 	ccommon
 	GIT_REPOSITORY https://github.com/EddyTheCo/Common.git
 	GIT_TAG v0.3.0
-)
+	)
 FetchContent_MakeAvailable(ccommon)
 version_from_git(
 	LOG       OFF
 	TIMESTAMP "%Y%m%d%H%M%S"
-)
+	)
 project(qmllintBot VERSION ${VERSION} DESCRIPTION "create code reviews from qmllint json" LANGUAGES CXX)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -27,25 +27,31 @@ find_package(Qt6 COMPONENTS Core Network Gui Quick Qml)
 if(Qt6_FOUND)
 
 	qt_standard_project_setup()
-        add_executable(qmlLintBot  src/qmllintBot.cpp
-            include/gitHClient.hpp include/qmlReviewer.hpp
-            src/gitHClient.cpp src/qmlReviewer.cpp
-        )
-        target_include_directories(qmlLintBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+	add_executable(qmlLintBot  src/qmllintBot.cpp
+		include/gitHClient.hpp include/qmlReviewer.hpp
+		src/gitHClient.cpp src/qmlReviewer.cpp
+		)
+	target_include_directories(qmlLintBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 	target_link_libraries(qmlLintBot PRIVATE Qt6::Core Qt6::Network)
+
 	set_target_properties(qmlLintBot PROPERTIES
 		WIN32_EXECUTABLE ON
 		MACOSX_BUNDLE ON
-	)
+		)
+	install(IMPORTED_RUNTIME_ARTIFACTS Qt6::QTlsBackendOpenSSLPlugin
+		DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		COMPONENT opensslBend
+		RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT  opensslBend
+		)
 	install(TARGETS qmlLintBot COMPONENT Bot
 		BUNDLE DESTINATION . COMPONENT Bot
-	)
+		)
 	if(QTDEPLOY)
 		qt_generate_deploy_app_script(
 			TARGET qmlLintBot
 			OUTPUT_SCRIPT deploy_script
-		)
+			)
 		install(SCRIPT ${deploy_script} COMPONENT Bot)
 	endif(QTDEPLOY)
 	build_cpack()
