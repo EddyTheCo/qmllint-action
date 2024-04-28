@@ -31,7 +31,7 @@ if(Qt6_FOUND)
 	include(InstallRequiredSystemLibraries)
 	FetchContent_Declare(
 		YAML-CPP
-		GIT_REPOSITORY git@github.com:jbeder/yaml-cpp.git
+		GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
 		GIT_TAG 0.8.0
 		FIND_PACKAGE_ARGS CONFIG
 		)
