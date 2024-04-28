@@ -72,6 +72,7 @@ qDebug()<<"lNumbers: "<<lNumbers;
                          qDebug()<<"Error on diff:"<<errorreply;
                          qDebug()<<"code:"<<code;
                          qDebug()<<"errorfound:"<<reply->readAll();
+                         emit ready();
                          reply->deleteLater();
                      });
 }

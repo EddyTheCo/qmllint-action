@@ -12,8 +12,8 @@ Rectangle {
     color: "red"
     border.color: "black"
     border.width: 5
-    radius: 10
-    anchors.centerIn:wrongWindowId
+    radus: 10
+    anchors.centerIn:window1
 }
 
 }

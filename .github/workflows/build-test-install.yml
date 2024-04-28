@@ -14,17 +14,17 @@ jobs:
       matrix:
         os: [ubuntu-latest]
 
-    uses: EddyTheCo/Common/.github/workflows/build-test-install.yml@v0.4.0
+    uses: EddyTheCo/Common/.github/workflows/build-test-install.yml@add_clang-tidy
     with:
       os: ${{ matrix.os }}
       qtVersion: '6.6.0'
       cmakeArgs: " -DQTDEPLOY=ON -DCPACK_PACKAGE_CONTACT=estervtech@gmail.com -DREPO_URL=https://eddytheco.github.io/QVault -DCPACK_PACKAGE_VENDOR=estervtech"
       test: false
-      qmllint: ${{ startsWith(github.base_ref, 'develop') }}
+      lint: ${{ startsWith(github.base_ref, 'develop') }}
 
   build_doxygen:
     if: startsWith(github.ref, 'refs/tags/v')
-    uses: EddyTheCo/Common/.github/workflows/build-docs.yml@v0.3.0
+    uses: EddyTheCo/Common/.github/workflows/build-docs.yml@v0.4.0
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
