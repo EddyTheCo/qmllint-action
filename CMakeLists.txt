@@ -6,7 +6,7 @@ include(FetchContent)
 FetchContent_Declare(
 	ccommon
 	GIT_REPOSITORY https://github.com/EddyTheCo/Common.git
-	GIT_TAG v0.3.0
+	GIT_TAG v0.4.0
 	)
 FetchContent_MakeAvailable(ccommon)
 version_from_git(
@@ -24,18 +24,36 @@ include(GNUInstallDirs)
 
 find_package(Qt6 COMPONENTS Core Network Gui Quick Qml)
 
+
+
+
 if(Qt6_FOUND)
+	include(InstallRequiredSystemLibraries)
+	FetchContent_Declare(
+		YAML-CPP
+		GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+		GIT_TAG 0.8.0
+		FIND_PACKAGE_ARGS CONFIG
+		)
+	FetchContent_MakeAvailable(YAML-CPP)
 
 	qt_standard_project_setup()
-	add_executable(qmlLintBot  src/qmllintBot.cpp
-		include/gitHClient.hpp include/qmlReviewer.hpp
-		src/gitHClient.cpp src/qmlReviewer.cpp
-		)
-	target_include_directories(qmlLintBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+	add_library(gitReviewer src/gitHClient.cpp include/gitHClient.hpp
+		src/reviewer.cpp include/reviewer.hpp)
+	target_include_directories(gitReviewer PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/Esterv/>")
+	target_link_libraries(gitReviewer PUBLIC Qt6::Core Qt6::Network)
 
-	target_link_libraries(qmlLintBot PRIVATE Qt6::Core Qt6::Network)
+	add_executable(yamlToJson  src/yamltojson.cpp)
 
-	set_target_properties(qmlLintBot PROPERTIES
+	add_executable(lintBot  src/lintBot.cpp)
+
+	target_link_libraries(yamlToJson PRIVATE yaml-cpp Qt6::Core)
+
+	target_link_libraries(lintBot PRIVATE gitReviewer)
+
+
+	set_target_properties(lintBot yamlToJson PROPERTIES
 		WIN32_EXECUTABLE ON
 		MACOSX_BUNDLE ON
 		)
@@ -43,15 +61,23 @@ if(Qt6_FOUND)
 		DESTINATION plugins/tls
 		COMPONENT opensslBend
 		)
-	install(TARGETS qmlLintBot COMPONENT Bot
-		BUNDLE DESTINATION . COMPONENT Bot
+	install(TARGETS lintBot COMPONENT lintBot
+		BUNDLE DESTINATION . COMPONENT lintBot
+		)
+	install(TARGETS yamlToJson COMPONENT yamlToJson
+		BUNDLE DESTINATION . COMPONENT yamlToJson
 		)
 	if(QTDEPLOY)
 		qt_generate_deploy_app_script(
-			TARGET qmlLintBot
+			TARGET lintBot
 			OUTPUT_SCRIPT deploy_script
 			)
-		install(SCRIPT ${deploy_script} COMPONENT Bot)
+		install(SCRIPT ${deploy_script} COMPONENT lintBot)
+		qt_generate_deploy_app_script(
+			TARGET yamlToJson
+			OUTPUT_SCRIPT deploy_script
+			)
+		install(SCRIPT ${deploy_script} COMPONENT yamlToJson)
 	endif(QTDEPLOY)
 	build_cpack()
 	add_subdirectory(examples)
