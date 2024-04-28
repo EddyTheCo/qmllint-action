@@ -2,17 +2,17 @@
 #include <QQmlApplicationEngine>
 #include <stdint.h>
 
-int main(int argc, char *argv[]) {
-  QGuiApplication app(argc, argv);
+int main(int argc, char* argv[])
+{
+	QGuiApplication app(argc, argv);
 
-  QQmlApplicationEngine engine;
+	QQmlApplicationEngine engine;
 
-  engine.addImportPath("qrc:/amarulasolutions.com/imports");
+	engine.addImportPath("qrc:/amarulasolutions.com/imports");
 
-  const QUrl url =
-      QUrl("qrc:/amarulasolutions.com/imports/Eexample1/qml/example1.qml");
+	QUrl url = QUrl("qrc:/amarulasolutions.com/imports/Eexample1/qml/example1.qml");
 
-  engine.load(url);
+	engine.load(url);
 
-  return app.exec();
+	return app.exec();
 }
