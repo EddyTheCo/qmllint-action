@@ -28,7 +28,7 @@ jobs:
           echo "prn=$(cat pr_number)" >> $GITHUB_OUTPUT
 
       - name: 'Run reviewer'
-        uses: EddyTheCo/qmllint-action/@main
+        uses: EddyTheCo/qmllint-action/@develop
         with:
           jsondir:  ${{ github.workspace }}
           pr_number: ${{ steps.getprn.outputs.prn }}
