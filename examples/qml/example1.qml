@@ -10,8 +10,8 @@ ApplicationWindow {
         height: 100
         color: "red"
         border.color: "black"
-        border.width: 5
-        radus: 10
+        boder.width: 5
+        radius: 10
         anchors.centerIn: window1
     }
 }
