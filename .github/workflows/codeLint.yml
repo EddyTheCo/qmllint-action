@@ -21,14 +21,26 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
 
+      - name: Install dependencies on ubuntu
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-tidy
+
       - name: Read pr number
         id: getprn
         run: |
           cat pr_number
           echo "prn=$(cat pr_number)" >> $GITHUB_OUTPUT
 
-      - name: 'Run reviewer'
+      - name: 'Run QML Reviewer'
         uses: EddyTheCo/qmllint-action/@develop
         with:
           jsondir:  ${{ github.workspace }}
           pr_number: ${{ steps.getprn.outputs.prn }}
+
+      - name: Run clang-tidy Reviewer
+        uses: platisd/clang-tidy-pr-comments@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          clang_tidy_fixes: fixes.yml
+          pull_request_id: ${{ steps.getprn.outputs.prn }}
