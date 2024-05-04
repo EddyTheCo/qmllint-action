@@ -55,8 +55,9 @@ QJsonObject ModuleReviewer::getReview(
   QJsonObject review;
   QJsonArray commentsInChange;
 
-  QString errorString = "<details><summary> :warning: " + QString::number(m_comments.size())
-                        + " warnings </summary>\n";
+  QString errorString =
+      "<details><summary> :warning: " + QString::number(m_comments.size()) +
+      " warnings </summary>\n";
   for (const auto &v : std::as_const(m_comments)) {
     const auto comment = v.toObject();
     const auto path = comment["path"].toString();
