@@ -11,7 +11,7 @@ ApplicationWindow {
         color: "red"
         border.color: "black"
         border.width: 5
-        radus: 10
+        radius: var?.10??20
         anchors.centerIn: window1
     }
 }
