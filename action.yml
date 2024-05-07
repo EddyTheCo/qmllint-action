@@ -1,6 +1,6 @@
 name: qmllint reviewer
-description: Creates review comments from qmlint json files
-author: Amarula Solutions
+description: Creates review comments from qmllint json files
+author: estervtech
 
 inputs:
   jsondir:
@@ -22,7 +22,7 @@ runs:
     - uses: robinraju/release-downloader@v1.10
       id: download
       with:
-        latest: true
+        tag: 'v0.1.0'
         extract: true
         repository: "EddyTheCo/qmllint-action"
         fileName: "*Linux*.tar.gz"
@@ -34,4 +34,4 @@ runs:
         export DPATH=$(echo ${{ fromJson(steps.download.outputs.downloaded_files)[0] }} | sed 's/\.tar\.gz//g')
         echo $DPATH
         export LD_LIBRARY_PATH=$DPATH/lib
-        $DPATH/bin/qmlLintBot ${{ inputs.jsondir }}  ${{ inputs.repodir }} ${{ github.repository }} ${{ inputs.pr_number }} ${{ github.token }}
+        $DPATH/bin/qmllintBot ${{ inputs.jsondir }}  ${{ inputs.repodir }} ${{ github.repository }} ${{ inputs.pr_number }} ${{ github.token }}
