@@ -1,5 +1,5 @@
 name: qmllint reviewer
-description: Creates review comments from qmlint json files
+description: Creates review comments from qmllint json files
 author: estervtech
 
 inputs:
