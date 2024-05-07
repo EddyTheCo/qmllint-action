@@ -1,16 +1,16 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-int main(int argc, char *argv[]) {
-  QGuiApplication app(argc, argv);
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
 
-  QQmlApplicationEngine engine;
+    QQmlApplicationEngine engine;
 
-  engine.addImportPath("qrc:/esterVtech.com/imports");
+    engine.addImportPath("qrc:/esterVtech.com/imports");
 
-  const QUrl url =
-      QUrl("qrc:/esterVtech.com/imports/Eexample1/qml/example1.qml");
+    const QUrl url = QUrl("qrc:/esterVtech.com/imports/Eexample1/qml/example1.qml");
 
-  engine.load(url);
+    engine.load(url);
 
-  return app.exec();
+    return app.exec();
 }
