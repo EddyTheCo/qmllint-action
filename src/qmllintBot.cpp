@@ -4,7 +4,7 @@
 #include <QTimer>
 
 #include "gitHClient.hpp"
-#include "reviewer.hpp"
+#include "gitHReviewer.hpp"
 
 int main(int argc, char *argv[]) {
   QCoreApplication app(argc, argv);

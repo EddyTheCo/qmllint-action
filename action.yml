@@ -1,6 +1,6 @@
 name: qmllint reviewer
 description: Creates review comments from qmlint json files
-author: Amarula Solutions
+author: estervtech
 
 inputs:
   jsondir:
@@ -22,7 +22,7 @@ runs:
     - uses: robinraju/release-downloader@v1.10
       id: download
       with:
-        latest: true
+        tag: 'v0.1.0'
         extract: true
         repository: "EddyTheCo/qmllint-action"
         fileName: "*Linux*.tar.gz"

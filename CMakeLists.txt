@@ -10,7 +10,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(ccommon)
 version_from_git(LOG OFF TIMESTAMP "%Y%m%d%H%M%S")
 project(
-  qmllintBot
+  QMLlintBot
   VERSION ${VERSION}
   DESCRIPTION "create code reviews from qmllint json"
   LANGUAGES CXX)
@@ -26,16 +26,15 @@ find_package(Qt6 COMPONENTS Core Network Gui Quick Qml)
 
 if(Qt6_FOUND)
   include(InstallRequiredSystemLibraries)
-
   qt_standard_project_setup()
-
   add_executable(
     qmllintBot src/qmllintBot.cpp src/gitHClient.cpp include/gitHClient.hpp
-               src/reviewer.cpp include/reviewer.hpp)
+               src/gitHReviewer.cpp include/gitHReviewer.hpp)
 
-  target_link_libraries(qmllintBot PRIVATE Qt6::Core Qt6::Network)
   target_include_directories(
     qmllintBot PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+
+  target_link_libraries(qmllintBot PRIVATE Qt6::Core Qt6::Network)
 
   set_target_properties(qmllintBot PROPERTIES WIN32_EXECUTABLE ON MACOSX_BUNDLE
                                                                   ON)

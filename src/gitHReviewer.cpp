@@ -1,4 +1,4 @@
-#include "reviewer.hpp"
+#include "gitHReviewer.hpp"
 #include <QDir>
 #include <QFileInfo>
 #include <QJsonDocument>
@@ -55,10 +55,9 @@ QJsonObject ModuleReviewer::getReview(
   QJsonObject review;
   QJsonArray commentsInChange;
 
-  QString errorString =
-      "<details><summary> :warning: " + QString::number(m_comments.size()) +
-      " warnings </summary>\n";
-  for (const auto &v : std::as_const(m_comments)) {
+  QString errorString = "<details><summary>:warning: " + QString::number(m_comments.size()) +
+      " warnings </summary><ul>";
+        for (const auto &v : std::as_const(m_comments)) {
     const auto comment = v.toObject();
     const auto path = comment["path"].toString();
 
@@ -75,14 +74,13 @@ QJsonObject ModuleReviewer::getReview(
     if (!comment["line"].isNull()) {
       line = QString::number(comment["line"].toInteger());
     }
-    errorString += "- " + comment["path"].toString() +
+    errorString += "<li> " + comment["path"].toString() +
                    (line != "" ? (":" + line) : "") + " (" +
-                   comment["body"].toString() + ")\n";
+                   comment["body"].toString() + ")</li>";
   }
-  errorString += "</details>";
+	errorString += "</ul></details>";
   if (m_comments.size()) {
-    review.insert("body", "**Lint report for " + m_module + " module**\n" +
-                              errorString);
+    review.insert("body", "**Lint report for " + m_module + " module.**\n"  + errorString);
     review.insert("event", "COMMENT");
     review.insert("comments", commentsInChange);
   }

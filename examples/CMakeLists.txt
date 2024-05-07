@@ -10,10 +10,9 @@ foreach(example "example1")
     QML_FILES
     "qml/${example}.qml"
     RESOURCE_PREFIX
-    "/amarulasolutions.com/imports"
+    "/esterVtech.com/imports"
     IMPORT_PATH
     ${CMAKE_BINARY_DIR})
 
   target_link_libraries(${example} PRIVATE Qt::Gui Qt::Qml Qt::Quick)
-
 endforeach()
