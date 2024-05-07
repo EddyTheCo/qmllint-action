@@ -7,11 +7,11 @@ ApplicationWindow {
 
     Rectangle {
         width: 100
-        height: 100
+        heigt: 100
         color: "red"
         border.color: "black"
         border.width: 5
-        radius: var?.10??20
+        radius: 10
         anchors.centerIn: window1
     }
 }
